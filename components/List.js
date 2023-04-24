@@ -1,112 +1,54 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  Alert,
-} from 'react-native';
+import React, { useContext, useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { DataContext } from './dataprovider';
+import { Button } from 'react-native-web';
 
-export default function App() {
-  const [title, setTitle] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [data, setData] = useState([]);
+export default function List({handleDelete, handleEdit, editable}) {
 
-  const generatePassword = () => {
-    const length = 12;
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=';
-    let newPassword = '';
-    for (let i = 0; i < length; i++) {
-      newPassword += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
-    setPassword(newPassword);
-  };
-
-  const handleAdd = () => {
-    if (!title || !username || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-
-    setData([...data, { title, username, password }]);
-    setTitle('');
-    setUsername('');
-    setPassword('');
-  };
-
-  const handleEdit = (index) => {
-    const entry = data[index];
-    setTitle(entry.title);
-    setUsername(entry.username);
-    setPassword(entry.password);
-    setData([...data.slice(0, index), ...data.slice(index + 1)]);
-  };
-
-  const handleDelete = (index) => {
-    setData([...data.slice(0, index), ...data.slice(index + 1)]);
-  };
-
+  const {data} = useContext(DataContext)
+  
   const renderItem = ({ item, index }) => {
     return (
       <View style={styles.entry}>
         <View style={styles.entryInfo}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.username}>{item.username}</Text>
-          <Text style={styles.password}>{item.password}</Text>
+          <Text style={styles.password}>***************</Text>
         </View>
+      {editable && 
         <View style={styles.entryButtons}>
-          <TouchableOpacity onPress={() => handleEdit(index)}>
-            <Text style={styles.edit}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleDelete(index)}>
-            <Text style={styles.delete}>Delete</Text>
-          </TouchableOpacity>
+
+          <Button
+            onPress={() => handleDelete(index)}
+            title="DELETE"
+            color="red"
+          />
         </View>
+        }
+        {!editable && 
+        <View style={styles.entryButtons}>
+          <Button
+            onPress={() => navigator.clipboard.writeText(item.password)}
+            title="COPY"
+            color=
+            "#000000"
+          />
+        </View>
+        }
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add Entry</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Title"
-        value={title}
-        onChangeText={(text) => setTitle(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
-      />
-      <View style={styles.passwordInput}>
-        <TextInput
-          style={styles.passwordInputText}
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-        />
-        <TouchableOpacity
-          style={styles.generateButton}
-          onPress={() => generatePassword()}
-        >
-          <Text style={styles.generateButtonText}>Generate</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.addButton} onPress={() => handleAdd()}>
-        <Text style={styles.addButtonText}>Add Entry</Text>
-      </TouchableOpacity>
-      <FlatList
+      <FlatList 
         data={data}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         style={styles.list}
+        
       />
+      
     </View>
   );
 }
@@ -114,24 +56,26 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     marginTop: 20,
     marginBottom: 10,
+    color: '#fff',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#fff',
     borderRadius: 5,
     padding: 10,
     width: '100%',
     marginBottom: 10,
+    color: '#fff',
   },
   passwordInput: {
     flexDirection: 'row',
@@ -141,19 +85,20 @@ const styles = StyleSheet.create({
   },
   passwordInputText: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#fff',
     borderRadius: 5,
     padding: 10,
     flex: 1,
+    color: '#fff',
   },
   generateButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#fff',
     borderRadius: 5,
     padding: 10,
     marginLeft: 10,
   },
   generateButtonText: {
-    color: '#fff',
+    color: '#000',
     fontWeight: 'bold',
   },
   addButton: {
@@ -169,7 +114,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   list: {
-    width: '100%',
+    width: '95vw',
     marginTop: 20,
   },
   entry: {
@@ -177,31 +122,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#fff',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-    width: '100%',
   },
   entryInfo: {
     flex: 1,
   },
   entryButtons: {
     flexDirection: 'row',
-  },
-  edit: {
-    color: 'blue',
-    marginRight: 10,
-  },
-  delete: {
-    color: 'red',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    padding:10
   },
   username: {
     marginTop: 5,
+    color: '#fff',
   },
   password: {
     marginTop: 5,
-    secureTextEntry: 'true'
+    color: '#fff',
+    secureTextEntry: true,
   },
   passwordHidden: {
     marginTop: 5,
