@@ -1,19 +1,26 @@
 import React, { useContext, useState } from 'react';
-import Passwordlist from './list';
+import List from './list';
 import { DataContext } from './dataprovider';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 
 
 export default function Generator() {
-  const [keyword, setKeyword] = useState(20);
-  const {data, setData} = useContext(DataContext)
   const [title, setTitle] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [keyword, setKeyword] = useState(20);
+  const {data, setData} = useContext(DataContext)
 
   const getPassword = () => {
     fetch(`https://api.api-ninjas.com/v1/passwordgenerator?length=${keyword}`, {
-        headers: {'X-Api-Key': 'b0TqFhgtUBuwTTzxFZz0ww==9UZwBpXqo95F9zC4'}
+        headers: {'X-Api-Key': 'qeVaiAHFjF8orwV1bL4x6g==s3hnaFz35HYWAvWW'}
   })
     .then(response => response.json())
     .then(data => setPassword(data.random_password))
@@ -33,22 +40,8 @@ export default function Generator() {
     setPassword('');
   };
 
-  const handleEdit = (index) => {
-    const entry = data[index];
-    setTitle(entry.title);
-    setUsername(entry.username);
-    setPassword(entry.password);
-    setData([...data.slice(0, index), ...data.slice(index + 1)]);
-  };
-  
 
-  const handleDelete = (index) => {
-    if (window.confirm('Are you sure you want to DELETE this entry permanently'))
-{
-  setData([...data.slice(0, index), ...data.slice(index + 1)]);
-}
-    
-  };
+  console.log(data)
 
   return (
     <View style={styles.container}>
@@ -76,13 +69,13 @@ export default function Generator() {
           style={styles.generateButton}
           onPress={() => getPassword()}
         >
-          <Text style={styles.generateButtonText}>Generate Random Password</Text>
+          <Text style={styles.generateButtonText}>Generate  </Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.addButton} onPress={() => handleAdd()}>
-        <Text style={styles.addButtonText}>Add</Text>
+        <Text style={styles.addButtonText}>Add Entry</Text>
       </TouchableOpacity>
-      <Passwordlist handleDelete={handleDelete} handleEdit={handleEdit} editable/>
+      
     </View>
   );
 }
@@ -183,7 +176,6 @@ const styles = StyleSheet.create({
   },
   password: {
     marginTop: 5,
-    secureTextEntry: 'true',
     color: '#fff',
   },
   passwordHidden: {

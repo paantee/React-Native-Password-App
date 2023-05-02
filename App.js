@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DataProvider } from './components/dataprovider';
 import List from './components/list';
 import Generator from './components/generator';
-import "./App.css";
+
 
 const Tab = createBottomTabNavigator();
 

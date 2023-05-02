@@ -1,54 +1,84 @@
 import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { DataContext } from './dataprovider';
-import { Button } from 'react-native-web';
+import { Button } from 'react-native';
+import { Clipboard } from 'react-native';
 
-export default function List({handleDelete, handleEdit, editable}) {
+export default function List({ handleEdit, editable }) {
 
-  const {data} = useContext(DataContext)
-  
+  const {data, setData} = useContext(DataContext)
+  const handleDelete = (index) => {
+    Alert.alert(
+      '!!!',
+      'Are you sure you want to PERMANENTLY delete this entry?',
+      [
+        {
+          text: 'Delete',
+          onPress: () => setData([...data.slice(0, index), ...data.slice(index + 1)]),
+          style: 'delete',
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      {
+        cancelable: true,
+      },
+    );
+    };
   const renderItem = ({ item, index }) => {
     return (
       <View style={styles.entry}>
         <View style={styles.entryInfo}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.username}>{item.username}</Text>
-          <Text style={styles.password}>***************</Text>
+          <Text style={styles.password}>*****</Text>
         </View>
-      {editable && 
-        <View style={styles.entryButtons}>
-
-          <Button
-            onPress={() => handleDelete(index)}
-            title="DELETE"
-            color="red"
-          />
-        </View>
-        }
-        {!editable && 
-        <View style={styles.entryButtons}>
-          <Button
-            onPress={() => navigator.clipboard.writeText(item.password)}
-            title="COPY"
-            color=
-            "#000000"
-          />
-        </View>
-        }
+        {!editable ?
+          <View style={styles.entryButtons}>
+            <Button
+              onPress={() => handleDelete(index)}
+              title="DELETE "
+              color="red"
+            />
+          </View>
+          : null}
+        {!editable ?
+          <View style={styles.entryButtons}>
+            <Button
+              onPress={
+                () => Clipboard.setString(item.password) &
+                Alert.alert(
+                  'Password copied to clipboard',
+                  '',
+                  [
+                    {
+                      text: 'ok',
+                    },
+                  ],
+                  {
+                    cancelable: true,
+                  },
+                )
+              }
+              title="COPY "
+              color="white"
+            />
+          </View>
+          : null}
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <FlatList 
+      <FlatList
         data={data}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         style={styles.list}
-        
       />
-      
     </View>
   );
 }
@@ -114,8 +144,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   list: {
-    width: '95vw',
-    marginTop: 20,
+    width: '100%',
+    marginTop: 30,
   },
   entry: {
     flexDirection: 'row',
@@ -132,9 +162,10 @@ const styles = StyleSheet.create({
   },
   entryButtons: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    padding:10
+    padding:10,
+    marginBottom: 10,
   },
   username: {
     marginTop: 5,
@@ -143,10 +174,10 @@ const styles = StyleSheet.create({
   password: {
     marginTop: 5,
     color: '#fff',
-    secureTextEntry: true,
   },
   passwordHidden: {
     marginTop: 5,
     color: '#ccc',
   },
 });
+
