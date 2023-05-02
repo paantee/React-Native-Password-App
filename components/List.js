@@ -7,6 +7,7 @@ import { Clipboard } from 'react-native';
 export default function List({ handleEdit, editable }) {
 
   const {data, setData} = useContext(DataContext)
+  
   const handleDelete = (index) => {
     Alert.alert(
       '!!!',
@@ -27,6 +28,7 @@ export default function List({ handleEdit, editable }) {
       },
     );
     };
+
   const renderItem = ({ item, index }) => {
     return (
       <View style={styles.entry}>

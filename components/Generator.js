@@ -1,14 +1,7 @@
 import React, { useContext, useState } from 'react';
 import List from './list';
 import { DataContext } from './dataprovider';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 
 
 export default function Generator() {
