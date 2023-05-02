@@ -20,7 +20,7 @@ export default function Generator() {
 
   const getPassword = () => {
     fetch(`https://api.api-ninjas.com/v1/passwordgenerator?length=${keyword}`, {
-        headers: {'X-Api-Key': 'qeVaiAHFjF8orwV1bL4x6g==s3hnaFz35HYWAvWW'}
+        headers: {'X-Api-Key': 'b0TqFhgtUBuwTTzxFZz0ww==9UZwBpXqo95F9zC4'}
   })
     .then(response => response.json())
     .then(data => setPassword(data.random_password))
